@@ -32,8 +32,10 @@ export default function Home() {
     }
   };
 
-  useEffect(() => { fetchWorkers(); }, []);
-
+useEffect(() => {
+  fetchWorkers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
   const fetchWorkers = async () => {
     setLoading(true);
     try {
