@@ -6,15 +6,16 @@ SkillHire is a modern web application built on the MERN stack (MongoDB, Express,
 
 ## 📸 Application Screenshots
 
-*Here are some suggested views to capture. Save your screenshots as `.png` files in a folder named `screenshots/` at the root of the project to have them render automatically on GitHub:*
+*Here are some suggested views to capture. Save your screenshots as `.png` files in a folder named `Screenshots/` at the root of the project to have them render automatically on GitHub:*
 
 | Main Search Dashboard (Customer View) | Worker Request Dashboard (Worker View) |
 | :---: | :---: |
-| ![Home Page](./screenshots/home.png) | ![Worker Dashboard](./screenshots/dashboard.png) |
+| ![Home Page](./Screenshots/Home.png) | ![Worker Dashboard](./Screenshots/Dashboard.png) |
 
 | Create/Update Profile Settings | Customer Job Requests Tracking |
 | :---: | :---: |
-| ![Worker Profile](./screenshots/profile.png) | ![Customer Requests](./screenshots/requests.png) |
+| ![Worker Profile](./Screenshots/Profile.png) | ![Customer Requests](./Screenshots/Requests.png) |
+
 
 ---
 
