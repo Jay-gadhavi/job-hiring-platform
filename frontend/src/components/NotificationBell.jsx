@@ -109,50 +109,43 @@ export default function NotificationBell() {
         )}
       </button>
 
-      {/* Opaque/Acrylic Dropdown */}
+      {/* Redesigned solid high-contrast dropdown */}
       {showDropdown && (
         <div className="notification-dropdown slide-up">
-          <div style={styles.header}>
-            <span style={styles.headerTitle}>Notifications</span>
+          <div className="notification-header">
+            <span className="notification-header-title">Notifications</span>
             {unreadCount > 0 && (
-              <button onClick={handleMarkAllRead} style={styles.markAllBtn}>
+              <button onClick={handleMarkAllRead} className="notification-mark-all">
                 Mark all read
               </button>
             )}
           </div>
 
-          <div style={styles.list}>
+          <div className="notification-list">
             {notifications.length === 0 ? (
-              <div style={styles.empty}>
-                <span style={styles.emptyIcon}>📭</span>
-                <span style={styles.emptyText}>All caught up!</span>
+              <div className="notification-empty">
+                <span className="notification-empty-icon">📭</span>
+                <span className="notification-empty-text">All caught up!</span>
               </div>
             ) : (
               notifications.map(notif => (
                 <div 
                   key={notif._id} 
                   onClick={() => handleNotificationClick(notif)}
-                  style={{
-                    ...styles.item,
-                    backgroundColor: notif.isRead ? 'transparent' : 'rgba(99, 102, 241, 0.06)'
-                  }}
+                  className={`notification-item ${notif.isRead ? 'read' : 'unread'}`}
                 >
-                  <div style={styles.itemContent}>
-                    <p style={{
-                      ...styles.itemText,
-                      color: notif.isRead ? 'var(--text-secondary)' : 'var(--text-primary)',
-                      fontWeight: notif.isRead ? '400' : '600'
-                    }}>
+                  <div className="notification-item-content">
+                    <p className="notification-item-text">
                       {notif.message}
                     </p>
-                    <div style={styles.meta}>
-                      <span style={styles.time}>{formatTime(notif.createdAt)}</span>
-                      {!notif.isRead && <span style={styles.dot}></span>}
+                    <div className="notification-meta">
+                      <span className="notification-time">{formatTime(notif.createdAt)}</span>
+                      {!notif.isRead && <span className="notification-unread-dot"></span>}
                     </div>
                   </div>
                   <button 
                     onClick={(e) => handleDeleteNotif(e, notif._id)} 
-                    style={styles.deleteBtn}
+                    className="notification-delete-btn"
                     title="Delete notification"
                   >
                     ×
@@ -205,113 +198,5 @@ const styles = {
     justifyContent: 'center',
     boxShadow: '0 0 10px rgba(244, 63, 94, 0.6)',
     border: '2px solid var(--bg-primary)',
-  },
-  dropdown: {
-    position: 'absolute',
-    top: '50px',
-    right: '0',
-    width: '320px',
-    maxHeight: '420px',
-    zIndex: 999,
-    padding: '16px 0',
-    display: 'flex',
-    flexDirection: 'column',
-    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.6)',
-    borderRadius: '16px',
-    border: '1px solid var(--glass-border)',
-    backgroundColor: '#12131a', // Solid theme secondary bg for maximum text readability
-    backdropFilter: 'blur(30px)',
-    WebkitBackdropFilter: 'blur(30px)',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '0 16px 12px 16px',
-    borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-  },
-  headerTitle: {
-    fontWeight: '700',
-    fontSize: '16px',
-    fontFamily: 'var(--font-heading)',
-    background: 'linear-gradient(135deg, #fff 50%, var(--text-secondary) 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-  },
-  markAllBtn: {
-    background: 'none',
-    border: 'none',
-    color: 'var(--primary)',
-    fontSize: '12px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    padding: '4px 8px',
-    borderRadius: '6px',
-    transition: 'all 0.2s',
-  },
-  list: {
-    overflowY: 'auto',
-    flex: 1,
-  },
-  empty: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '32px 16px',
-    gap: '8px',
-  },
-  emptyIcon: {
-    fontSize: '32px',
-  },
-  emptyText: {
-    color: 'var(--text-secondary)',
-    fontSize: '14px',
-  },
-  item: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    padding: '12px 16px',
-    borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s',
-    gap: '12px',
-  },
-  itemContent: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '4px',
-  },
-  itemText: {
-    fontSize: '13px',
-    lineHeight: '1.4',
-    margin: 0,
-  },
-  meta: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-  },
-  time: {
-    fontSize: '11px',
-    color: 'var(--text-muted)',
-  },
-  dot: {
-    width: '6px',
-    height: '6px',
-    borderRadius: '50%',
-    backgroundColor: 'var(--primary)',
-    boxShadow: '0 0 6px var(--primary)',
-  },
-  deleteBtn: {
-    background: 'none',
-    border: 'none',
-    color: 'var(--text-muted)',
-    fontSize: '16px',
-    cursor: 'pointer',
-    padding: '0 4px',
-    lineHeight: '1',
-    transition: 'color 0.2s',
-  },
+  }
 };
