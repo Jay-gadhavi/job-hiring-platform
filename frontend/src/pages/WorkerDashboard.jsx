@@ -87,7 +87,7 @@ export default function WorkerDashboard() {
         <div style={styles.header}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <button className="btn-secondary" style={{ ...styles.backBtn, marginBottom: 0 }} onClick={() => navigate('/')}>
-              ← Back to Dashboard
+              ← Back to Home
             </button>
             <NotificationBell />
           </div>

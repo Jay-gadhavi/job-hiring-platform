@@ -173,7 +173,7 @@ export default function WorkerProfile() {
               style={styles.backBtn}
               onClick={() => navigate('/')}
             >
-              ← Back to Dashboard
+              ← Back to Home
             </button>
           </div>
         </form>
