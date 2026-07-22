@@ -348,7 +348,9 @@ const styles = {
     margin: '20px auto',
     maxWidth: '1200px',
     width: 'calc(100% - 40px)',
-    borderRadius: '16px'
+    borderRadius: '16px',
+    position: 'relative',
+    zIndex: 1000
   },
   logoGroup: {
     display: 'flex',
