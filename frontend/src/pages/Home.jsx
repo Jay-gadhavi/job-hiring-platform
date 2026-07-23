@@ -2,6 +2,17 @@ import { useState, useEffect } from 'react';
 import API from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import NotificationBell from '../components/NotificationBell';
+import { 
+  IconClipboard, 
+  IconUser, 
+  IconDashboard, 
+  IconArrowRight, 
+  IconTool, 
+  IconLocation, 
+  IconSearch, 
+  IconStar, 
+  IconPhone 
+} from '../components/Icons';
 
 export default function Home() {
   const [workers, setWorkers] = useState([]);
@@ -32,10 +43,11 @@ export default function Home() {
     }
   };
 
-useEffect(() => {
-  fetchWorkers();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
+  useEffect(() => {
+    fetchWorkers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const fetchWorkers = async () => {
     setLoading(true);
     try {
@@ -72,11 +84,11 @@ useEffect(() => {
 
   const getAvatarGradient = (name) => {
     const gradients = [
-      'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-      'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)',
-      'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-      'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-      'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+      'linear-gradient(135deg, #27272a 0%, #09090b 100%)',
+      'linear-gradient(135deg, #3f3f46 0%, #18181b 100%)',
+      'linear-gradient(135deg, #52525b 0%, #27272a 100%)',
+      'linear-gradient(135deg, #71717a 0%, #3f3f46 100%)',
+      'linear-gradient(135deg, #18181b 0%, #09090b 100%)',
     ];
     if (!name) return gradients[0];
     const charCodeSum = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -95,17 +107,20 @@ useEffect(() => {
         <div style={styles.navActions}>
           {user?.role === 'customer' && (
             <button className="btn-secondary" onClick={() => navigate('/my-requests')} style={styles.navBtn}>
-              📋 My Requests
+              <IconClipboard size={15} color="#e4e4e7" />
+              <span>My Requests</span>
             </button>
           )}
 
           {user?.role === 'worker' && (
             <div style={{ display: 'flex', gap: '10px' }}>
               <button className="btn-secondary" onClick={() => navigate('/worker-profile')} style={styles.navBtn}>
-                👤 My Profile
+                <IconUser size={15} color="#e4e4e7" />
+                <span>My Profile</span>
               </button>
               <button className="btn-secondary" onClick={() => navigate('/dashboard')} style={styles.navBtn}>
-                📊 Dashboard
+                <IconDashboard size={15} color="#e4e4e7" />
+                <span>Dashboard</span>
               </button>
             </div>
           )}
@@ -118,7 +133,7 @@ useEffect(() => {
           </div>
 
           <button className="btn-secondary" onClick={logout} style={styles.logoutBtn}>
-            Logout ➔
+            Logout <IconArrowRight size={14} color="#e4e4e7" />
           </button>
         </div>
       </header>
@@ -132,7 +147,9 @@ useEffect(() => {
         {/* Search widget */}
         <div className="glass-card" style={styles.searchBar}>
           <div style={styles.searchField}>
-            <span style={styles.fieldIcon}>🔧</span>
+            <span style={styles.fieldIcon}>
+              <IconTool size={18} color="#a1a1aa" />
+            </span>
             <input
               type="text"
               style={styles.searchInput}
@@ -144,7 +161,9 @@ useEffect(() => {
           </div>
           <div style={styles.searchDivider}></div>
           <div style={styles.searchField}>
-            <span style={styles.fieldIcon}>📍</span>
+            <span style={styles.fieldIcon}>
+              <IconLocation size={18} color="#a1a1aa" />
+            </span>
             <input
               type="text"
               style={styles.searchInput}
@@ -155,40 +174,47 @@ useEffect(() => {
             />
           </div>
           <button className="btn-primary" onClick={fetchWorkers} style={styles.searchBtn}>
-            🔍 Search
+            <IconSearch size={16} color="#09090b" />
+            <span>Search</span>
           </button>
         </div>
       </section>
 
       {/* Main Content Area */}
       <main style={styles.mainContent}>
-        <div style={styles.sectionHeader}>
-          <h2 style={styles.resultsHeading}>
-            {loading ? 'Searching Workers' : `${workers.length} Available Workers`}
-          </h2>
-          <div style={styles.headingUnderline}></div>
-        </div>
+        {(() => {
+          const currentUserId = user?.id || user?._id;
+          const filteredWorkers = workers.filter(w => !currentUserId || String(w.user?._id) !== String(currentUserId));
 
-        {loading ? (
-          <div style={styles.grid}>
-            {[1, 2, 3].map(i => (
-              <div key={i} className="glass-card skeleton-box" style={styles.skeletonCard}>
-                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                  <div style={styles.skeletonAvatar} className="skeleton-box"></div>
-                  <div style={{ flex: 1 }}>
-                    <div style={styles.skeletonTitle} className="skeleton-box"></div>
-                    <div style={styles.skeletonSubtitle} className="skeleton-box"></div>
-                  </div>
-                </div>
-                <div style={styles.skeletonText} className="skeleton-box"></div>
-                <div style={styles.skeletonText} className="skeleton-box"></div>
-                <div style={styles.skeletonFooter} className="skeleton-box"></div>
+          return (
+            <>
+              <div style={styles.sectionHeader}>
+                <h2 style={styles.resultsHeading}>
+                  {loading ? 'Searching Workers' : `${filteredWorkers.length} Available Workers`}
+                </h2>
+                <div style={styles.headingUnderline}></div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div style={styles.grid}>
-            {workers.map(w => {
+
+              {loading ? (
+                <div style={styles.grid}>
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="glass-card skeleton-box" style={styles.skeletonCard}>
+                      <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                        <div style={styles.skeletonAvatar} className="skeleton-box"></div>
+                        <div style={{ flex: 1 }}>
+                          <div style={styles.skeletonTitle} className="skeleton-box"></div>
+                          <div style={styles.skeletonSubtitle} className="skeleton-box"></div>
+                        </div>
+                      </div>
+                      <div style={styles.skeletonText} className="skeleton-box"></div>
+                      <div style={styles.skeletonText} className="skeleton-box"></div>
+                      <div style={styles.skeletonFooter} className="skeleton-box"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={styles.grid}>
+                  {filteredWorkers.map(w => {
               const bgGradient = getAvatarGradient(w.user?.name);
               return (
                 <div key={w._id} className="glass-card" style={styles.workerCard}>
@@ -199,16 +225,20 @@ useEffect(() => {
                     </div>
                     <div style={styles.workerInfo}>
                       <h3 style={styles.workerName}>{w.user?.name}</h3>
-                      <p style={styles.workerCity}>📍 {w.city}</p>
+                      <p style={styles.workerCity}>
+                        <IconLocation size={14} color="#a1a1aa" /> {w.city}
+                      </p>
                       <div style={styles.cardRating}>
                         {w.numReviews > 0 ? (
                           <>
-                            <span style={{ color: 'var(--accent-amber)' }}>★</span>
+                            <IconStar size={13} color="#ffffff" fill="#ffffff" />
                             <span style={styles.ratingVal}>{w.averageRating}</span>
                             <span style={styles.ratingCount}>({w.numReviews})</span>
                           </>
                         ) : (
-                          <span style={styles.noRating}>⭐ No ratings yet</span>
+                          <span style={styles.noRating}>
+                            <IconStar size={13} color="#71717a" /> No ratings yet
+                          </span>
                         )}
                       </div>
                     </div>
@@ -223,7 +253,7 @@ useEffect(() => {
 
                   {/* Experience and Bio */}
                   <p style={styles.exp}>
-                    <span style={{ color: 'var(--accent-amber)' }}>★</span> <strong>{w.experience} years</strong> experience
+                    <IconStar size={13} color="#a1a1aa" fill="#a1a1aa" /> <strong>{w.experience} years</strong> experience
                   </p>
                   <p style={styles.bio}>{w.bio || 'Professional skilled worker offering quality services at reasonable rates.'}</p>
 
@@ -233,7 +263,7 @@ useEffect(() => {
                       <span
                         style={{
                           ...styles.statusPulse,
-                          background: w.available ? 'var(--accent-emerald)' : 'var(--accent-rose)'
+                          background: w.available ? '#ffffff' : '#52525b'
                         }}
                         className={w.available ? 'pulse-active' : ''}
                       ></span>
@@ -241,14 +271,16 @@ useEffect(() => {
                         style={{
                           fontSize: '13px',
                           fontWeight: '600',
-                          color: w.available ? '#a7f3d0' : '#fecdd3'
+                          color: w.available ? '#ffffff' : '#a1a1aa'
                         }}
                       >
                         {w.available ? 'Available' : 'Busy'}
                       </span>
                     </div>
 
-                    <span style={styles.phone}>📞 {w.phone}</span>
+                    <span style={styles.phone}>
+                      <IconPhone size={13} color="#a1a1aa" /> {w.phone}
+                    </span>
                   </div>
 
                   {/* Customer Booking Option */}
@@ -294,15 +326,12 @@ useEffect(() => {
                                 <span style={styles.reviewItemAuthor}>{rev.customer?.name}</span>
                                 <div style={styles.reviewItemStars}>
                                   {Array.from({ length: 5 }).map((_, idx) => (
-                                    <span
+                                    <IconStar
                                       key={idx}
-                                      style={{
-                                        color: idx < rev.rating ? 'var(--accent-amber)' : 'var(--text-muted)',
-                                        fontSize: '11px'
-                                      }}
-                                    >
-                                      ★
-                                    </span>
+                                      size={11}
+                                      color={idx < rev.rating ? '#ffffff' : '#3f3f46'}
+                                      fill={idx < rev.rating ? '#ffffff' : 'none'}
+                                    />
                                   ))}
                                 </div>
                               </div>
@@ -319,9 +348,11 @@ useEffect(() => {
           </div>
         )}
 
-        {workers.length === 0 && !loading && (
+        {filteredWorkers.length === 0 && !loading && (
           <div className="glass-card" style={styles.emptyContainer}>
-            <div style={styles.emptyIcon}>🔍</div>
+            <div style={styles.emptyIcon}>
+              <IconSearch size={48} color="#71717a" />
+            </div>
             <h3 style={styles.emptyTitle}>No Matching Workers Found</h3>
             <p style={styles.emptySubtitle}>Try adjusting your search filters or inputting a different skill or city.</p>
             <button className="btn-secondary" onClick={() => { setSkill(''); setCity(''); fetchWorkers(); }} style={{ marginTop: '16px' }}>
@@ -329,6 +360,9 @@ useEffect(() => {
             </button>
           </div>
         )}
+            </>
+          );
+        })()}
       </main>
     </div>
   );
@@ -361,8 +395,8 @@ const styles = {
     width: '36px',
     height: '36px',
     borderRadius: '8px',
-    background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent-violet) 100%)',
-    color: '#fff',
+    background: 'linear-gradient(135deg, #ffffff 0%, #52525b 100%)',
+    color: '#09090b',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -388,14 +422,17 @@ const styles = {
     padding: '8px 16px',
     fontSize: '13px',
     height: '36px',
-    borderRadius: '8px'
+    borderRadius: '8px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px'
   },
   profileBadge: {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
     background: 'rgba(255, 255, 255, 0.04)',
-    border: '1px solid rgba(255, 255, 255, 0.06)',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
     padding: '4px 12px 4px 6px',
     borderRadius: '30px',
     height: '36px'
@@ -404,8 +441,8 @@ const styles = {
     width: '26px',
     height: '26px',
     borderRadius: '50%',
-    background: 'var(--primary)',
-    color: '#fff',
+    background: '#ffffff',
+    color: '#09090b',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -422,9 +459,12 @@ const styles = {
     fontSize: '13px',
     height: '36px',
     borderRadius: '8px',
-    border: '1px solid rgba(244, 63, 94, 0.2)',
-    color: '#fda4af',
-    background: 'rgba(244, 63, 94, 0.05)'
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    color: '#e4e4e7',
+    background: 'rgba(255, 255, 255, 0.04)',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px'
   },
   heroSection: {
     textAlign: 'center',
@@ -440,7 +480,7 @@ const styles = {
     position: 'absolute',
     width: '500px',
     height: '200px',
-    background: 'radial-gradient(ellipse, rgba(99, 102, 241, 0.12) 0%, transparent 60%)',
+    background: 'radial-gradient(ellipse, rgba(255, 255, 255, 0.08) 0%, transparent 60%)',
     top: '20%',
     zIndex: -1
   },
@@ -448,7 +488,7 @@ const styles = {
     fontSize: '42px',
     fontWeight: '800',
     lineHeight: '1.2',
-    background: 'linear-gradient(135deg, #ffffff 40%, #c7d2fe 100%)',
+    background: 'linear-gradient(135deg, #ffffff 40%, #a1a1aa 100%)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
     marginBottom: '14px',
@@ -467,9 +507,9 @@ const styles = {
     width: '100%',
     padding: '8px 10px',
     borderRadius: '50px',
-    background: 'rgba(15, 16, 26, 0.75)',
-    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
-    border: '1px solid rgba(255, 255, 255, 0.08)'
+    background: 'rgba(18, 18, 21, 0.85)',
+    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.5)',
+    border: '1px solid rgba(255, 255, 255, 0.1)'
   },
   searchField: {
     display: 'flex',
@@ -479,8 +519,10 @@ const styles = {
     gap: '10px'
   },
   fieldIcon: {
-    fontSize: '18px',
-    opacity: 0.8
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    opacity: 0.9
   },
   searchInput: {
     background: 'transparent',
@@ -519,7 +561,7 @@ const styles = {
   headingUnderline: {
     width: '40px',
     height: '3px',
-    background: 'var(--primary)',
+    background: '#ffffff',
     borderRadius: '2px',
     marginTop: '6px'
   },
@@ -553,7 +595,8 @@ const styles = {
     fontSize: '22px',
     fontWeight: '800',
     fontFamily: 'var(--font-heading)',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+    border: '1px solid rgba(255, 255, 255, 0.1)'
   },
   workerInfo: {
     flex: 1
@@ -566,7 +609,10 @@ const styles = {
   },
   workerCity: {
     fontSize: '13px',
-    color: 'var(--text-secondary)'
+    color: 'var(--text-secondary)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px'
   },
   skillsRow: {
     display: 'flex',
@@ -575,9 +621,9 @@ const styles = {
     marginBottom: '16px'
   },
   skillTag: {
-    background: 'rgba(99, 102, 241, 0.1)',
-    border: '1px solid rgba(99, 102, 241, 0.25)',
-    color: '#a5b4fc',
+    background: 'rgba(255, 255, 255, 0.06)',
+    border: '1px solid rgba(255, 255, 255, 0.12)',
+    color: '#e4e4e7',
     padding: '4px 12px',
     borderRadius: '20px',
     fontSize: '11px',
@@ -587,7 +633,10 @@ const styles = {
   exp: {
     fontSize: '13px',
     color: 'var(--text-secondary)',
-    marginBottom: '10px'
+    marginBottom: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px'
   },
   bio: {
     fontSize: '13px',
@@ -620,7 +669,10 @@ const styles = {
   phone: {
     fontSize: '13px',
     color: 'var(--text-secondary)',
-    fontWeight: '500'
+    fontWeight: '500',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px'
   },
   bookBtn: {
     width: '100%',
@@ -640,9 +692,11 @@ const styles = {
     margin: '40px auto 0'
   },
   emptyIcon: {
-    fontSize: '48px',
     marginBottom: '16px',
-    opacity: 0.7
+    opacity: 0.9,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   emptyTitle: {
     fontSize: '20px',
@@ -690,8 +744,8 @@ const styles = {
     display: 'inline-block',
     width: '16px',
     height: '16px',
-    border: '2px solid rgba(255,255,255,0.3)',
-    borderTopColor: '#fff',
+    border: '2px solid rgba(0,0,0,0.3)',
+    borderTopColor: '#000',
     borderRadius: '50%',
     animation: 'spin 0.8s linear infinite'
   },
@@ -712,7 +766,10 @@ const styles = {
   },
   noRating: {
     fontSize: '12px',
-    color: 'var(--text-muted)'
+    color: 'var(--text-muted)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px'
   },
   toggleReviewsBtn: {
     width: '100%',
@@ -775,7 +832,7 @@ const styles = {
   },
   reviewItemStars: {
     display: 'flex',
-    gap: '1px'
+    gap: '2px'
   },
   reviewItemComment: {
     fontSize: '12px',

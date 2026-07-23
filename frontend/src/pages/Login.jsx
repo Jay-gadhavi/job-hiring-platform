@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import API from '../api/axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { IconAlertTriangle } from '../components/Icons';
 
 export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -43,7 +44,7 @@ export default function Login() {
 
         {error && (
           <div style={styles.errorAlert}>
-            <span style={{ fontSize: '16px' }}>⚠️</span>
+            <IconAlertTriangle size={18} color="#e4e4e7" />
             <span style={{ flex: 1 }}>{error}</span>
           </div>
         )}
@@ -110,7 +111,7 @@ const styles = {
     width: '300px',
     height: '300px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%)',
     top: '20%',
     left: '20%',
     zIndex: 0,
@@ -121,7 +122,7 @@ const styles = {
     width: '350px',
     height: '350px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(219, 70, 239, 0.15) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%)',
     bottom: '20%',
     right: '20%',
     zIndex: 0,
@@ -144,8 +145,8 @@ const styles = {
     width: '48px',
     height: '48px',
     borderRadius: '12px',
-    background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent-violet) 100%)',
-    color: '#fff',
+    background: 'linear-gradient(135deg, #ffffff 0%, #3f3f46 100%)',
+    color: '#09090b',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -153,7 +154,7 @@ const styles = {
     fontWeight: '800',
     fontFamily: 'var(--font-heading)',
     marginBottom: '16px',
-    boxShadow: '0 4px 12px var(--primary-glow)'
+    boxShadow: '0 4px 12px rgba(255, 255, 255, 0.15)'
   },
   title: {
     fontSize: '28px',
@@ -193,11 +194,11 @@ const styles = {
     height: '46px'
   },
   errorAlert: {
-    background: 'rgba(244, 63, 94, 0.12)',
-    border: '1px solid rgba(244, 63, 94, 0.3)',
+    background: 'rgba(255, 255, 255, 0.05)',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
     borderRadius: '8px',
     padding: '12px',
-    color: '#fda4af',
+    color: '#f4f4f5',
     fontSize: '13px',
     marginBottom: '20px',
     display: 'flex',
@@ -212,8 +213,8 @@ const styles = {
     color: 'var(--text-secondary)'
   },
   linkText: {
-    color: 'var(--primary)',
-    textDecoration: 'none',
+    color: '#ffffff',
+    textDecoration: 'underline',
     fontWeight: '600',
     transition: 'color var(--transition-fast)'
   },
@@ -221,8 +222,8 @@ const styles = {
     display: 'inline-block',
     width: '18px',
     height: '18px',
-    border: '2px solid rgba(255,255,255,0.3)',
-    borderTopColor: '#fff',
+    border: '2px solid rgba(0,0,0,0.3)',
+    borderTopColor: '#000',
     borderRadius: '50%',
     animation: 'spin 0.8s linear infinite'
   }

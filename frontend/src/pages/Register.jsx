@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import API from '../api/axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { IconAlertTriangle, IconSearch, IconTool } from '../components/Icons';
 
 export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'customer' });
@@ -43,7 +44,7 @@ export default function Register() {
 
         {error && (
           <div style={styles.errorAlert}>
-            <span style={{ fontSize: '16px' }}>⚠️</span>
+            <IconAlertTriangle size={18} color="#e4e4e7" />
             <span style={{ flex: 1 }}>{error}</span>
           </div>
         )}
@@ -92,7 +93,9 @@ export default function Register() {
                 className={`role-card ${form.role === 'customer' ? 'active' : ''}`}
                 onClick={() => setForm({ ...form, role: 'customer' })}
               >
-                <span className="role-icon">🔍</span>
+                <div className="role-icon">
+                  <IconSearch size={22} color={form.role === 'customer' ? '#ffffff' : '#a1a1aa'} />
+                </div>
                 <span className="role-title">Hire Help</span>
                 <p style={styles.roleDesc}>Find workers</p>
               </div>
@@ -101,7 +104,9 @@ export default function Register() {
                 className={`role-card ${form.role === 'worker' ? 'active' : ''}`}
                 onClick={() => setForm({ ...form, role: 'worker' })}
               >
-                <span className="role-icon">🛠️</span>
+                <div className="role-icon">
+                  <IconTool size={22} color={form.role === 'worker' ? '#ffffff' : '#a1a1aa'} />
+                </div>
                 <span className="role-title">Find Work</span>
                 <p style={styles.roleDesc}>Provide service</p>
               </div>
@@ -145,7 +150,7 @@ const styles = {
     width: '300px',
     height: '300px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%)',
     top: '15%',
     left: '15%',
     zIndex: 0,
@@ -156,7 +161,7 @@ const styles = {
     width: '350px',
     height: '350px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(219, 70, 239, 0.12) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%)',
     bottom: '15%',
     right: '15%',
     zIndex: 0,
@@ -179,8 +184,8 @@ const styles = {
     width: '48px',
     height: '48px',
     borderRadius: '12px',
-    background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent-violet) 100%)',
-    color: '#fff',
+    background: 'linear-gradient(135deg, #ffffff 0%, #3f3f46 100%)',
+    color: '#09090b',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -188,7 +193,7 @@ const styles = {
     fontWeight: '800',
     fontFamily: 'var(--font-heading)',
     marginBottom: '16px',
-    boxShadow: '0 4px 12px var(--primary-glow)'
+    boxShadow: '0 4px 12px rgba(255, 255, 255, 0.15)'
   },
   title: {
     fontSize: '28px',
@@ -233,11 +238,11 @@ const styles = {
     marginTop: '2px'
   },
   errorAlert: {
-    background: 'rgba(244, 63, 94, 0.12)',
-    border: '1px solid rgba(244, 63, 94, 0.3)',
+    background: 'rgba(255, 255, 255, 0.05)',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
     borderRadius: '8px',
     padding: '12px',
-    color: '#fda4af',
+    color: '#f4f4f5',
     fontSize: '13px',
     marginBottom: '20px',
     display: 'flex',
@@ -252,8 +257,8 @@ const styles = {
     color: 'var(--text-secondary)'
   },
   linkText: {
-    color: 'var(--primary)',
-    textDecoration: 'none',
+    color: '#ffffff',
+    textDecoration: 'underline',
     fontWeight: '600',
     transition: 'color var(--transition-fast)'
   },
@@ -261,8 +266,8 @@ const styles = {
     display: 'inline-block',
     width: '18px',
     height: '18px',
-    border: '2px solid rgba(255,255,255,0.3)',
-    borderTopColor: '#fff',
+    border: '2px solid rgba(0,0,0,0.3)',
+    borderTopColor: '#000',
     borderRadius: '50%',
     animation: 'spin 0.8s linear infinite'
   }

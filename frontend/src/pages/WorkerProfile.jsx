@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import API from '../api/axios';
 import { useNavigate } from 'react-router-dom';
+import { IconSparkles, IconAlertTriangle } from '../components/Icons';
 
 export default function WorkerProfile() {
   const [form, setForm] = useState({ skills: '', city: '', experience: '', phone: '', bio: '' });
@@ -79,14 +80,14 @@ export default function WorkerProfile() {
 
         {message && (
           <div style={styles.successAlert}>
-            <span style={{ fontSize: '16px' }}>✨</span>
+            <IconSparkles size={18} color="#ffffff" />
             <span style={{ flex: 1 }}>{message}</span>
           </div>
         )}
 
         {error && (
           <div style={styles.errorAlert}>
-            <span style={{ fontSize: '16px' }}>⚠️</span>
+            <IconAlertTriangle size={18} color="#e4e4e7" />
             <span style={{ flex: 1 }}>{error}</span>
           </div>
         )}
@@ -197,7 +198,7 @@ const styles = {
     width: '350px',
     height: '350px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%)',
     top: '10%',
     left: '10%',
     zIndex: 0,
@@ -208,7 +209,7 @@ const styles = {
     width: '300px',
     height: '300px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%)',
     bottom: '10%',
     right: '10%',
     zIndex: 0,
@@ -231,8 +232,8 @@ const styles = {
     width: '48px',
     height: '48px',
     borderRadius: '12px',
-    background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent-violet) 100%)',
-    color: '#fff',
+    background: 'linear-gradient(135deg, #ffffff 0%, #3f3f46 100%)',
+    color: '#09090b',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -240,7 +241,7 @@ const styles = {
     fontWeight: '800',
     fontFamily: 'var(--font-heading)',
     marginBottom: '16px',
-    boxShadow: '0 4px 12px var(--primary-glow)'
+    boxShadow: '0 4px 12px rgba(255, 255, 255, 0.15)'
   },
   title: {
     fontSize: '28px',
@@ -288,11 +289,11 @@ const styles = {
     height: '46px'
   },
   successAlert: {
-    background: 'rgba(16, 185, 129, 0.12)',
-    border: '1px solid rgba(16, 185, 129, 0.3)',
+    background: 'rgba(255, 255, 255, 0.1)',
+    border: '1px solid rgba(255, 255, 255, 0.25)',
     borderRadius: '8px',
     padding: '12px',
-    color: '#a7f3d0',
+    color: '#ffffff',
     fontSize: '13px',
     marginBottom: '20px',
     display: 'flex',
@@ -301,11 +302,11 @@ const styles = {
     lineHeight: '1.4'
   },
   errorAlert: {
-    background: 'rgba(244, 63, 94, 0.12)',
-    border: '1px solid rgba(244, 63, 94, 0.3)',
+    background: 'rgba(255, 255, 255, 0.05)',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
     borderRadius: '8px',
     padding: '12px',
-    color: '#fda4af',
+    color: '#f4f4f5',
     fontSize: '13px',
     marginBottom: '20px',
     display: 'flex',
@@ -317,8 +318,8 @@ const styles = {
     display: 'inline-block',
     width: '18px',
     height: '18px',
-    border: '2px solid rgba(255,255,255,0.3)',
-    borderTopColor: '#fff',
+    border: '2px solid rgba(0,0,0,0.3)',
+    borderTopColor: '#000',
     borderRadius: '50%',
     animation: 'spin 0.8s linear infinite'
   }

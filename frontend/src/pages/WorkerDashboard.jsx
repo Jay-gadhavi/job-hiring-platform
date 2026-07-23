@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import API from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import NotificationBell from '../components/NotificationBell';
+import { IconUser, IconClipboard, IconStatusDot } from '../components/Icons';
 
 export default function WorkerDashboard() {
   const [jobs, setJobs] = useState([]);
@@ -78,6 +79,35 @@ export default function WorkerDashboard() {
     }
   };
 
+  const getStatusBadgeStyle = (status) => {
+    switch (status) {
+      case 'accepted':
+        return {
+          background: 'rgba(255, 255, 255, 0.12)',
+          color: '#ffffff',
+          border: '1px solid rgba(255, 255, 255, 0.3)'
+        };
+      case 'rejected':
+        return {
+          background: '#18181b',
+          color: '#71717a',
+          border: '1px solid #3f3f46'
+        };
+      case 'completed':
+        return {
+          background: '#ffffff',
+          color: '#09090b',
+          border: '1px solid #ffffff'
+        };
+      default: // pending
+        return {
+          background: 'rgba(255, 255, 255, 0.05)',
+          color: '#a1a1aa',
+          border: '1px solid rgba(255, 255, 255, 0.15)'
+        };
+    }
+  };
+
   return (
     <div style={styles.container} className="fade-in">
       <div style={styles.blob1}></div>
@@ -97,7 +127,9 @@ export default function WorkerDashboard() {
 
         {noProfile ? (
           <div className="glass-card fade-in" style={styles.emptyCard}>
-            <span style={{ fontSize: '48px', marginBottom: '16px', display: 'block' }}>👤</span>
+            <span style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+              <IconUser size={48} color="#71717a" />
+            </span>
             <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '6px' }}>Profile Required</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '24px' }}>
               Please create a worker profile first to start receiving job requests and managing availability.
@@ -113,9 +145,10 @@ export default function WorkerDashboard() {
               <div style={styles.statusTextGroup}>
                 <h3 style={styles.statusCardTitle}>Availability Status</h3>
                 <p style={styles.statusCardSubtitle}>
+                  <IconStatusDot active={available} size={8} />
                   {available 
-                    ? '🟢 Active & Available: You are visible in search results and can receive requests.' 
-                    : '🔴 Offline / Busy: You are hidden from search results.'}
+                    ? 'Active & Available: You are visible in search results and can receive requests.' 
+                    : 'Offline / Busy: You are hidden from search results.'}
                 </p>
               </div>
               <button 
@@ -123,7 +156,8 @@ export default function WorkerDashboard() {
                 className={available ? "btn-primary" : "btn-secondary"} 
                 style={{ 
                   ...styles.toggleBtn,
-                  background: available ? 'linear-gradient(135deg, var(--accent-emerald) 0%, #059669 100%)' : 'rgba(255,255,255,0.06)' 
+                  background: available ? '#ffffff' : 'rgba(255,255,255,0.06)',
+                  color: available ? '#09090b' : '#ffffff'
                 }}
                 disabled={toggling}
               >
@@ -138,7 +172,9 @@ export default function WorkerDashboard() {
               </div>
             ) : jobs.length === 0 ? (
               <div className="glass-card" style={styles.emptyCard}>
-                <span style={{ fontSize: '48px', marginBottom: '16px', display: 'block' }}>📋</span>
+                <span style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+                  <IconClipboard size={48} color="#71717a" />
+                </span>
                 <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '6px' }}>No Job Requests Yet</h3>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
                   Your profile is active. When customers near your city search for your skills, their job requests will appear here.
@@ -158,15 +194,7 @@ export default function WorkerDashboard() {
                       </div>
                       <span style={{
                         ...styles.statusBadge,
-                        background:
-                          job.status === 'accepted' ? 'rgba(16, 185, 129, 0.12)' :
-                          job.status === 'rejected' ? 'rgba(244, 63, 94, 0.12)' : 'rgba(245, 158, 11, 0.12)',
-                        color:
-                          job.status === 'accepted' ? '#a7f3d0' :
-                          job.status === 'rejected' ? '#fda4af' : '#fef3c7',
-                        border:
-                          job.status === 'accepted' ? '1px solid rgba(16, 185, 129, 0.3)' :
-                          job.status === 'rejected' ? '1px solid rgba(244, 63, 94, 0.3)' : '1px solid rgba(245, 158, 11, 0.3)',
+                        ...getStatusBadgeStyle(job.status)
                       }}>
                         {job.status.toUpperCase()}
                       </span>
@@ -240,7 +268,7 @@ const styles = {
     width: '400px',
     height: '400px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%)',
     top: '-10%',
     right: '10%',
     zIndex: 0,
@@ -251,7 +279,7 @@ const styles = {
     width: '350px',
     height: '350px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(219, 70, 239, 0.12) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%)',
     bottom: '5%',
     left: '10%',
     zIndex: 0,
@@ -294,8 +322,8 @@ const styles = {
     display: 'inline-block',
     width: '32px',
     height: '32px',
-    border: '3px solid rgba(99,102,241,0.2)',
-    borderTopColor: 'var(--primary)',
+    border: '3px solid rgba(255,255,255,0.2)',
+    borderTopColor: '#ffffff',
     borderRadius: '50%',
     animation: 'spin 0.8s linear infinite'
   },
@@ -303,8 +331,8 @@ const styles = {
     display: 'inline-block',
     width: '16px',
     height: '16px',
-    border: '2px solid rgba(255,255,255,0.3)',
-    borderTopColor: '#fff',
+    border: '2px solid rgba(0,0,0,0.3)',
+    borderTopColor: '#000',
     borderRadius: '50%',
     animation: 'spin 0.8s linear infinite'
   },
@@ -373,9 +401,9 @@ const styles = {
     lineHeight: '1.5'
   },
   skillTag: {
-    background: 'rgba(99, 102, 241, 0.12)',
-    border: '1px solid rgba(99, 102, 241, 0.25)',
-    color: '#a5b4fc',
+    background: 'rgba(255, 255, 255, 0.08)',
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    color: '#f4f4f5',
     padding: '2px 8px',
     borderRadius: '4px',
     fontSize: '12px',
@@ -391,23 +419,25 @@ const styles = {
     flex: 1,
     height: '38px',
     fontSize: '13px',
-    background: 'linear-gradient(135deg, var(--accent-emerald) 0%, #059669 100%)',
-    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+    background: '#ffffff',
+    color: '#09090b',
+    boxShadow: '0 4px 12px rgba(255, 255, 255, 0.15)'
   },
   completeBtn: {
     flex: 1,
     height: '38px',
     fontSize: '13px',
-    background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent-violet) 100%)',
-    boxShadow: '0 4px 12px var(--primary-glow)'
+    background: '#ffffff',
+    color: '#09090b',
+    boxShadow: '0 4px 12px rgba(255, 255, 255, 0.15)'
   },
   rejectBtn: {
     flex: 1,
     height: '38px',
     fontSize: '13px',
-    border: '1px solid rgba(244, 63, 94, 0.3)',
-    background: 'rgba(244, 63, 94, 0.05)',
-    color: '#fda4af'
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    background: 'rgba(255, 255, 255, 0.04)',
+    color: '#a1a1aa'
   },
   statusCard: {
     display: 'flex',
@@ -433,7 +463,9 @@ const styles = {
   statusCardSubtitle: {
     fontSize: '13px',
     color: 'var(--text-secondary)',
-    lineHeight: '1.4'
+    lineHeight: '1.4',
+    display: 'flex',
+    alignItems: 'center'
   },
   toggleBtn: {
     padding: '10px 20px',
@@ -441,8 +473,7 @@ const styles = {
     borderRadius: '8px',
     fontWeight: '600',
     cursor: 'pointer',
-    border: '1px solid rgba(255,255,255,0.08)',
-    color: '#fff',
+    border: '1px solid rgba(255,255,255,0.15)',
     whiteSpace: 'nowrap',
     transition: 'all var(--transition-fast)'
   }

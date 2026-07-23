@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import API from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import NotificationBell from '../components/NotificationBell';
+import { IconClipboard, IconStar } from '../components/Icons';
 
 export default function MyRequests() {
   const [requests, setRequests] = useState([]);
@@ -40,10 +41,14 @@ export default function MyRequests() {
             onClick={() => onChange(star)}
             style={{
               ...styles.starSelectorIcon,
-              color: star <= value ? 'var(--accent-amber)' : 'var(--text-muted)'
+              opacity: star <= value ? 1 : 0.3
             }}
           >
-            ★
+            <IconStar 
+              size={20} 
+              color={star <= value ? '#ffffff' : '#71717a'} 
+              fill={star <= value ? '#ffffff' : 'none'} 
+            />
           </span>
         ))}
       </div>
@@ -71,27 +76,27 @@ export default function MyRequests() {
     switch (status) {
       case 'accepted':
         return {
-          background: 'rgba(16, 185, 129, 0.12)',
-          color: '#a7f3d0',
-          border: '1px solid rgba(16, 185, 129, 0.3)'
+          background: 'rgba(255, 255, 255, 0.12)',
+          color: '#ffffff',
+          border: '1px solid rgba(255, 255, 255, 0.3)'
         };
       case 'rejected':
         return {
-          background: 'rgba(244, 63, 94, 0.12)',
-          color: '#fda4af',
-          border: '1px solid rgba(244, 63, 94, 0.3)'
+          background: '#18181b',
+          color: '#71717a',
+          border: '1px solid #3f3f46'
         };
       case 'completed':
         return {
-          background: 'rgba(139, 92, 246, 0.12)',
-          color: '#c7d2fe',
-          border: '1px solid rgba(139, 92, 246, 0.3)'
+          background: '#ffffff',
+          color: '#09090b',
+          border: '1px solid #ffffff'
         };
       default: // pending
         return {
-          background: 'rgba(245, 158, 11, 0.12)',
-          color: '#fef3c7',
-          border: '1px solid rgba(245, 158, 11, 0.3)'
+          background: 'rgba(255, 255, 255, 0.05)',
+          color: '#a1a1aa',
+          border: '1px solid rgba(255, 255, 255, 0.15)'
         };
     }
   };
@@ -120,7 +125,9 @@ export default function MyRequests() {
           </div>
         ) : requests.length === 0 ? (
           <div className="glass-card" style={styles.emptyCard}>
-            <span style={{ fontSize: '48px', marginBottom: '16px', display: 'block' }}>📋</span>
+            <span style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+              <IconClipboard size={48} color="#71717a" />
+            </span>
             <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '6px' }}>No Requests Sent Yet</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '400px', margin: '0 auto' }}>
               When you request services from workers on the search page, details of those bookings will be tracked right here.
@@ -178,14 +185,12 @@ export default function MyRequests() {
                             <span style={styles.reviewDisplayTitle}>My Review</span>
                             <div style={styles.ratingStars}>
                               {Array.from({ length: 5 }).map((_, idx) => (
-                                <span
+                                <IconStar
                                   key={idx}
-                                  style={{
-                                    color: idx < job.review.rating ? 'var(--accent-amber)' : 'var(--text-muted)'
-                                  }}
-                                >
-                                  ★
-                                </span>
+                                  size={14}
+                                  color={idx < job.review.rating ? '#ffffff' : '#3f3f46'}
+                                  fill={idx < job.review.rating ? '#ffffff' : 'none'}
+                                />
                               ))}
                             </div>
                           </div>
@@ -242,7 +247,7 @@ export default function MyRequests() {
                             setComment('');
                           }}
                         >
-                          ⭐ Leave a Review
+                          <IconStar size={14} color="#09090b" fill="#09090b" /> Leave a Review
                         </button>
                       )}
                     </div>
@@ -270,7 +275,7 @@ const styles = {
     width: '400px',
     height: '400px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%)',
     top: '-10%',
     right: '10%',
     zIndex: 0,
@@ -281,7 +286,7 @@ const styles = {
     width: '350px',
     height: '350px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(219, 70, 239, 0.12) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%)',
     bottom: '5%',
     left: '10%',
     zIndex: 0,
@@ -324,8 +329,8 @@ const styles = {
     display: 'inline-block',
     width: '32px',
     height: '32px',
-    border: '3px solid rgba(99,102,241,0.2)',
-    borderTopColor: 'var(--primary)',
+    border: '3px solid rgba(255,255,255,0.2)',
+    borderTopColor: '#ffffff',
     borderRadius: '50%',
     animation: 'spin 0.8s linear infinite'
   },
@@ -355,8 +360,8 @@ const styles = {
     width: '44px',
     height: '44px',
     borderRadius: '10px',
-    background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent-violet) 100%)',
-    color: '#fff',
+    background: 'linear-gradient(135deg, #ffffff 0%, #3f3f46 100%)',
+    color: '#09090b',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -394,9 +399,9 @@ const styles = {
     alignItems: 'flex-start'
   },
   skillTag: {
-    background: 'rgba(99, 102, 241, 0.12)',
-    border: '1px solid rgba(99, 102, 241, 0.25)',
-    color: '#a5b4fc',
+    background: 'rgba(255, 255, 255, 0.08)',
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    color: '#f4f4f5',
     padding: '2px 8px',
     borderRadius: '4px',
     fontSize: '12px',
@@ -439,7 +444,7 @@ const styles = {
   },
   reviewForm: {
     background: 'rgba(255, 255, 255, 0.03)',
-    border: '1px solid rgba(99, 102, 241, 0.15)',
+    border: '1px solid rgba(255, 255, 255, 0.15)',
     borderRadius: '10px',
     padding: '16px'
   },
@@ -466,10 +471,11 @@ const styles = {
     gap: '6px'
   },
   starSelectorIcon: {
-    fontSize: '22px',
     cursor: 'pointer',
     transition: 'transform 0.1s ease',
-    userSelect: 'none'
+    userSelect: 'none',
+    display: 'flex',
+    alignItems: 'center'
   },
   formActions: {
     display: 'flex',
@@ -490,17 +496,18 @@ const styles = {
     width: '100%',
     height: '36px',
     fontSize: '13px',
-    background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%)',
-    border: '1px solid rgba(99, 102, 241, 0.25)',
-    color: '#a5b4fc',
-    boxShadow: 'none'
+    borderRadius: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px'
   },
   btnSpinner: {
     display: 'inline-block',
     width: '14px',
     height: '14px',
-    border: '2px solid rgba(255,255,255,0.3)',
-    borderTopColor: '#fff',
+    border: '2px solid rgba(0,0,0,0.3)',
+    borderTopColor: '#000',
     borderRadius: '50%',
     animation: 'spin 0.8s linear infinite'
   }

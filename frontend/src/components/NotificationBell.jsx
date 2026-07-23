@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
+import { IconBell, IconInbox } from './Icons';
 
 export default function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
@@ -103,7 +104,9 @@ export default function NotificationBell() {
         style={styles.bellBtn}
         aria-label="Notifications"
       >
-        <span style={styles.bellIcon}>🔔</span>
+        <span style={styles.bellIcon}>
+          <IconBell size={18} color="#e4e4e7" />
+        </span>
         {unreadCount > 0 && (
           <span style={styles.badge}>{unreadCount}</span>
         )}
@@ -124,7 +127,9 @@ export default function NotificationBell() {
           <div className="notification-list">
             {notifications.length === 0 ? (
               <div className="notification-empty">
-                <span className="notification-empty-icon">📭</span>
+                <span className="notification-empty-icon">
+                  <IconInbox size={32} color="#71717a" />
+                </span>
                 <span className="notification-empty-text">All caught up!</span>
               </div>
             ) : (
@@ -167,7 +172,7 @@ const styles = {
   },
   bellBtn: {
     background: 'rgba(255, 255, 255, 0.05)',
-    border: '1px solid rgba(255, 255, 255, 0.08)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
     borderRadius: '12px',
     width: '40px',
     height: '40px',
@@ -179,14 +184,16 @@ const styles = {
     transition: 'all 0.2s ease',
   },
   bellIcon: {
-    fontSize: '18px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   badge: {
     position: 'absolute',
     top: '-4px',
     right: '-4px',
-    background: 'var(--accent-rose)',
-    color: '#fff',
+    background: '#ffffff',
+    color: '#09090b',
     borderRadius: '50%',
     minWidth: '18px',
     height: '18px',
@@ -196,7 +203,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 0 10px rgba(244, 63, 94, 0.6)',
+    boxShadow: '0 0 10px rgba(255, 255, 255, 0.5)',
     border: '2px solid var(--bg-primary)',
   }
 };

@@ -4,31 +4,30 @@
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Inter', sans-serif;
 
-  /* Color Palette */
-  --bg-primary: #0a0b10;
-  --bg-secondary: #12131a;
-  --bg-tertiary: #1b1c26;
+  /* Monochromatic Color Palette */
+  --bg-primary: #09090b;
+  --bg-secondary: #121215;
+  --bg-tertiary: #18181b;
 
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --primary-glow: rgba(99, 102, 241, 0.4);
+  --primary: #f4f4f5;
+  --primary-hover: #ffffff;
+  --primary-glow: rgba(255, 255, 255, 0.15);
 
-  --accent-pink: #d946ef;
-  --accent-violet: #8b5cf6;
-  --accent-amber: #f59e0b;
-  --accent-emerald: #10b981;
-  --accent-rose: #f43f5e;
+  --accent-mono-high: #ffffff;
+  --accent-mono-mid: #a1a1aa;
+  --accent-mono-low: #3f3f46;
+  --accent-mono-subtle: #27272a;
 
   /* Text colors */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
 
-  /* Glassmorphism settings */
-  --glass-bg: rgba(20, 21, 33, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-border-hover: rgba(255, 255, 255, 0.15);
-  --glass-shadow: rgba(0, 0, 0, 0.5);
+  /* Monochromatic Glassmorphism settings */
+  --glass-bg: rgba(24, 24, 27, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-hover: rgba(255, 255, 255, 0.25);
+  --glass-shadow: rgba(0, 0, 0, 0.75);
   --glass-blur: 16px;
 
   /* Transitions */
@@ -55,7 +54,7 @@ body {
   position: relative;
 }
 
-/* Beautiful Animated Background Grid & Gradients */
+/* Minimalist Monochromatic Ambient Lighting */
 body::before {
   content: "";
   position: fixed;
@@ -65,10 +64,10 @@ body::before {
   height: 100vh;
   z-index: -1;
   background: 
-    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(217, 70, 239, 0.05) 0%, transparent 50%);
-  filter: blur(80px);
+    radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(255, 255, 255, 0.03) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 60%);
+  filter: blur(90px);
   pointer-events: none;
 }
 
@@ -93,7 +92,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .glass-card:hover {
   border-color: var(--glass-border-hover);
-  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 12px 40px rgba(255, 255, 255, 0.06);
 }
 
 /* Scrollbar */
@@ -109,13 +108,13 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background: var(--accent-mono-mid);
 }
 
 /* Inputs styling */
 .modern-input {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
   padding: 12px 16px;
   border-radius: 8px;
@@ -136,18 +135,18 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
-/* Buttons styling */
+/* Monochromatic Buttons styling */
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--accent-violet) 100%);
-  color: #fff;
-  border: none;
+  background: #ffffff;
+  color: #09090b;
+  border: 1px solid #ffffff;
   padding: 12px 24px;
   border-radius: 8px;
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: 15px;
   cursor: pointer;
-  box-shadow: 0 4px 14px var(--primary-glow);
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
   transition: all var(--transition-fast);
   display: inline-flex;
   align-items: center;
@@ -156,9 +155,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary:hover {
+  background: #e4e4e7;
+  border-color: #e4e4e7;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-  opacity: 0.95;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
 }
 
 .btn-primary:active {
@@ -168,7 +168,7 @@ h1, h2, h3, h4, h5, h6 {
 .btn-secondary {
   background: rgba(255, 255, 255, 0.06);
   color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 12px 24px;
   border-radius: 8px;
   font-family: var(--font-heading);
@@ -184,7 +184,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-secondary:hover {
   background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
 
@@ -198,9 +198,9 @@ h1, h2, h3, h4, h5, h6 {
 .role-card {
   flex: 1;
   background: rgba(255, 255, 255, 0.03);
-  border: 2px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  padding: 14px;
+  padding: 16px 14px;
   text-align: center;
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -210,20 +210,21 @@ h1, h2, h3, h4, h5, h6 {
 .role-card:hover {
   background: rgba(255, 255, 255, 0.06);
   color: var(--text-primary);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .role-card.active {
-  background: rgba(99, 102, 241, 0.12);
-  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #ffffff;
   color: var(--text-primary);
-  box-shadow: 0 0 12px var(--primary-glow);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
 }
 
 .role-icon {
-  font-size: 24px;
-  margin-bottom: 6px;
-  display: block;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .role-title {
@@ -243,9 +244,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes pulse-ring {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
 }
 
 .pulse-active {
@@ -276,7 +277,7 @@ h1, h2, h3, h4, h5, h6 {
   to { transform: rotate(360deg); }
 }
 
-/* --- Notification Dropdown Redesign --- */
+/* --- Monochromatic Notification Dropdown Redesign --- */
 .notification-dropdown {
   position: absolute !important;
   top: 52px !important;
@@ -287,9 +288,9 @@ h1, h2, h3, h4, h5, h6 {
   display: flex !important;
   flex-direction: column !important;
   border-radius: 14px !important;
-  background-color: #141520 !important; /* Solid dark background to prevent bleed-through */
-  border: 1px solid rgba(99, 102, 241, 0.35) !important; /* Indigo glow border */
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.85), 0 0 25px rgba(99, 102, 241, 0.12) !important;
+  background-color: #121215 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 255, 255, 0.05) !important;
   overflow: hidden !important;
 }
 
@@ -298,7 +299,7 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: space-between !important;
   align-items: center !important;
   padding: 14px 16px !important;
-  background-color: #1a1c2b !important; /* Solid dark title bar */
+  background-color: #18181b !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
@@ -312,7 +313,7 @@ h1, h2, h3, h4, h5, h6 {
 .notification-mark-all {
   background: none !important;
   border: none !important;
-  color: #818cf8 !important; /* Indigo primary highlight */
+  color: #a1a1aa !important;
   font-size: 12px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
@@ -322,14 +323,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .notification-mark-all:hover {
-  color: #a5b4fc !important;
-  background-color: rgba(99, 102, 241, 0.15) !important;
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .notification-list {
   overflow-y: auto !important;
   flex: 1 !important;
-  background-color: #141520 !important;
+  background-color: #121215 !important;
 }
 
 .notification-empty {
@@ -342,7 +343,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .notification-empty-icon {
-  font-size: 32px !important;
+  color: #71717a !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .notification-empty-text {
@@ -362,20 +366,18 @@ h1, h2, h3, h4, h5, h6 {
   position: relative !important;
 }
 
-/* Unread Item State */
 .notification-item.unread {
-  background-color: #1c1d2c !important; /* Lighter shade */
-  border-left: 4px solid var(--primary) !important; /* Left active indicator bar */
+  background-color: #1a1a1e !important;
+  border-left: 4px solid #ffffff !important;
 }
 
-/* Read Item State */
 .notification-item.read {
-  background-color: #141520 !important; /* Solid dark base */
+  background-color: #121215 !important;
   border-left: 4px solid transparent !important;
 }
 
 .notification-item:hover {
-  background-color: #25273d !important; /* Clear highlight on hover */
+  background-color: #27272a !important;
 }
 
 .notification-item-content {
@@ -398,7 +400,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .notification-item.read .notification-item-text {
-  color: #94a3b8 !important;
+  color: #a1a1aa !important;
   font-weight: 400 !important;
 }
 
@@ -410,21 +412,21 @@ h1, h2, h3, h4, h5, h6 {
 
 .notification-time {
   font-size: 11px !important;
-  color: #64748b !important;
+  color: #71717a !important;
 }
 
 .notification-unread-dot {
   width: 6px !important;
   height: 6px !important;
   border-radius: 50% !important;
-  background-color: var(--primary) !important;
-  box-shadow: 0 0 6px var(--primary) !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8) !important;
 }
 
 .notification-delete-btn {
   background: rgba(255, 255, 255, 0.04) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  color: #64748b !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #71717a !important;
   font-size: 14px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
@@ -440,9 +442,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .notification-delete-btn:hover {
-  background-color: var(--accent-rose) !important;
+  background-color: #3f3f46 !important;
   color: #ffffff !important;
-  border-color: var(--accent-rose) !important;
+  border-color: #71717a !important;
   transform: scale(1.1) !important;
 }
-
