@@ -5,6 +5,8 @@ const Worker = require('../models/Worker');
 const Review = require('../models/Review');
 const Notification = require('../models/Notification');
 const protect = require('../middleware/auth');
+const { getIO } = require('../config/socket');
+
 
 
 router.post('/request', protect, async (req, res) => {
@@ -32,13 +34,21 @@ router.post('/request', protect, async (req, res) => {
     });
 
     // Create Notification for the worker
-    await Notification.create({
+    const notification = await Notification.create({
       user: worker.user,
       sender: req.user.id,
       message: `You have received a new job request for '${skill}'.`,
       type: 'job_request',
       relatedId: job._id
     });
+
+    // Emit real-time socket events
+    const io = getIO();
+    if (io) {
+      const populatedNotif = await Notification.findById(notification._id).populate('sender', 'name');
+      io.to(`user_${worker.user}`).emit('notification', populatedNotif);
+      io.to(`user_${worker.user}`).emit('job_updated', { type: 'new_job', job });
+    }
 
     res.status(201).json(job);
   } catch (err) {
@@ -102,13 +112,21 @@ router.patch('/:id', protect, async (req, res) => {
     await job.save();
 
     // Create Notification for the customer
-    await Notification.create({
+    const notification = await Notification.create({
       user: job.customer,
       sender: req.user.id,
       message: `Your job request for '${job.skill}' has been ${status}.`,
       type: 'job_status',
       relatedId: job._id
     });
+
+    // Emit real-time socket events
+    const io = getIO();
+    if (io) {
+      const populatedNotif = await Notification.findById(notification._id).populate('sender', 'name');
+      io.to(`user_${job.customer}`).emit('notification', populatedNotif);
+      io.to(`user_${job.customer}`).emit('job_updated', { type: 'status_changed', job });
+    }
 
     res.json(job);
   } catch (err) {

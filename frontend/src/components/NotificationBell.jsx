@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
+import { useSocket } from '../context/SocketContext';
 import { IconBell, IconInbox } from './Icons';
 
 export default function NotificationBell() {
@@ -10,16 +11,16 @@ export default function NotificationBell() {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user'));
+  const { socket } = useSocket();
 
   useEffect(() => {
     if (!token) return;
 
     fetchNotifications();
     
-    // Set up polling every 10 seconds for real-time-like updates
-    const interval = setInterval(fetchNotifications, 10000);
+    // Fallback polling every 30s
+    const interval = setInterval(fetchNotifications, 30000);
 
-    // Event listener to close dropdown on click outside
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
@@ -32,6 +33,24 @@ export default function NotificationBell() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [token]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleRealtimeNotif = (newNotif) => {
+      setNotifications(prev => {
+        if (prev.some(n => n._id === newNotif._id)) return prev;
+        return [newNotif, ...prev];
+      });
+    };
+
+    socket.on('notification', handleRealtimeNotif);
+
+    return () => {
+      socket.off('notification', handleRealtimeNotif);
+    };
+  }, [socket]);
+
 
   const fetchNotifications = async () => {
     try {

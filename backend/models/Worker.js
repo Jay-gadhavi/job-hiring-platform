@@ -10,6 +10,19 @@ const workerSchema = new mongoose.Schema({
   bio: { type: String },
   averageRating: { type: Number, default: 0 },
   numReviews: { type: Number, default: 0 },
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      default: 'Point'
+    },
+    coordinates: {
+      type: [Number], // [longitude, latitude]
+      default: [0, 0]
+    }
+  }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Worker', workerSchema);
+workerSchema.index({ location: '2dsphere' });
+
+module.exports = mongoose.model('Worker', workerSchema);

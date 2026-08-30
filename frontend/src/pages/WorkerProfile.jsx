@@ -1,14 +1,23 @@
 import { useEffect, useState } from 'react';
 import API from '../api/axios';
 import { useNavigate } from 'react-router-dom';
-import { IconSparkles, IconAlertTriangle } from '../components/Icons';
+import { IconSparkles, IconAlertTriangle, IconLocation, IconCheck } from '../components/Icons';
 
 export default function WorkerProfile() {
-  const [form, setForm] = useState({ skills: '', city: '', experience: '', phone: '', bio: '' });
+  const [form, setForm] = useState({
+    skills: '',
+    city: '',
+    experience: '',
+    phone: '',
+    bio: '',
+    latitude: '',
+    longitude: ''
+  });
   const [isNewProfile, setIsNewProfile] = useState(true);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [detectingGps, setDetectingGps] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,12 +29,15 @@ export default function WorkerProfile() {
       const { data } = await API.get('/workers/my-profile');
       if (data) {
         setIsNewProfile(false);
+        const coords = data.location?.coordinates;
         setForm({
           skills: data.skills.join(', '),
           city: data.city,
           experience: data.experience,
           phone: data.phone,
-          bio: data.bio
+          bio: data.bio,
+          longitude: coords?.[0] !== undefined && coords?.[0] !== 0 ? coords[0] : '',
+          latitude: coords?.[1] !== undefined && coords?.[1] !== 0 ? coords[1] : ''
         });
       }
     } catch (err) {
@@ -33,10 +45,35 @@ export default function WorkerProfile() {
     }
   };
 
+  const detectLocation = () => {
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by your browser');
+      return;
+    }
+    setError('');
+    setDetectingGps(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setForm(prev => ({
+          ...prev,
+          latitude: Number(position.coords.latitude.toFixed(6)),
+          longitude: Number(position.coords.longitude.toFixed(6))
+        }));
+        setDetectingGps(false);
+      },
+      (err) => {
+        console.error(err);
+        setError('Could not retrieve GPS coordinates. Please allow location permissions in your browser.');
+        setDetectingGps(false);
+      },
+      { timeout: 10000, enableHighAccuracy: true }
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.skills || !form.city || !form.experience || !form.phone || !form.bio) {
-      setError('Please fill in all fields');
+      setError('Please fill in all required fields');
       return;
     }
 
@@ -48,7 +85,9 @@ export default function WorkerProfile() {
       const payload = {
         ...form,
         skills: form.skills.split(',').map(s => s.trim()).filter(Boolean),
-        experience: Number(form.experience)
+        experience: Number(form.experience),
+        latitude: form.latitude ? parseFloat(form.latitude) : undefined,
+        longitude: form.longitude ? parseFloat(form.longitude) : undefined
       };
 
       if (isNewProfile) {
@@ -65,6 +104,8 @@ export default function WorkerProfile() {
       setLoading(false);
     }
   };
+
+  const hasCoordinates = form.latitude !== '' && form.longitude !== '';
 
   return (
     <div style={styles.container} className="fade-in">
@@ -131,6 +172,34 @@ export default function WorkerProfile() {
             </div>
           </div>
 
+          {/* GPS Location section */}
+          <div style={styles.gpsCard}>
+            <div style={styles.gpsHeader}>
+              <div>
+                <label style={styles.label}>Precise GPS Location</label>
+                <p style={styles.gpsSubtitle}>Allows nearby customers to discover you by distance radius</p>
+              </div>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={detectLocation}
+                disabled={detectingGps}
+                style={styles.gpsBtn}
+              >
+                <IconLocation size={14} color="#ffffff" />
+                <span>{detectingGps ? 'Locating...' : hasCoordinates ? 'Update GPS' : 'Detect GPS'}</span>
+              </button>
+            </div>
+            {hasCoordinates ? (
+              <div style={styles.coordsBadge}>
+                <IconCheck size={14} color="#ffffff" />
+                <span>GPS Set: {form.latitude}, {form.longitude}</span>
+              </div>
+            ) : (
+              <span style={styles.noCoordsText}>No GPS coordinates captured yet (optional)</span>
+            )}
+          </div>
+
           <div style={styles.inputGroup}>
             <label style={styles.label}>Contact Phone</label>
             <input 
@@ -182,6 +251,7 @@ export default function WorkerProfile() {
     </div>
   );
 }
+
 
 const styles = {
   container: {
@@ -278,6 +348,56 @@ const styles = {
   inputHelp: {
     color: 'var(--text-muted)',
     fontSize: '11px',
+    paddingLeft: '4px'
+  },
+  gpsCard: {
+    background: 'rgba(255, 255, 255, 0.03)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: '12px',
+    padding: '14px 16px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px'
+  },
+  gpsHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '12px'
+  },
+  gpsSubtitle: {
+    fontSize: '11px',
+    color: 'var(--text-muted)',
+    margin: '2px 0 0 4px',
+    lineHeight: '1.3'
+  },
+  gpsBtn: {
+    padding: '6px 12px',
+    fontSize: '12px',
+    height: '32px',
+    borderRadius: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    whiteSpace: 'nowrap'
+  },
+  coordsBadge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    background: 'rgba(255, 255, 255, 0.08)',
+    border: '1px solid rgba(255, 255, 255, 0.18)',
+    borderRadius: '6px',
+    padding: '4px 10px',
+    fontSize: '11px',
+    color: '#ffffff',
+    fontWeight: '600',
+    alignSelf: 'flex-start'
+  },
+  noCoordsText: {
+    fontSize: '11px',
+    color: 'var(--text-muted)',
+    fontStyle: 'italic',
     paddingLeft: '4px'
   },
   button: {

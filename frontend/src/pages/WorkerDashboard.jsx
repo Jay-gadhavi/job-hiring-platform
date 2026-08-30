@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import API from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import NotificationBell from '../components/NotificationBell';
-import { IconUser, IconClipboard, IconStatusDot } from '../components/Icons';
+import { IconUser, IconClipboard, IconStatusDot, IconMessage, IconAlertTriangle } from '../components/Icons';
+import { useSocket } from '../context/SocketContext';
+import ChatModal from '../components/ChatModal';
+import DisputeModal from '../components/DisputeModal';
+
 
 export default function WorkerDashboard() {
   const [jobs, setJobs] = useState([]);
@@ -11,12 +15,31 @@ export default function WorkerDashboard() {
   const [available, setAvailable] = useState(true);
   const [toggling, setToggling] = useState(false);
   const [noProfile, setNoProfile] = useState(false);
+  const [activeChatJob, setActiveChatJob] = useState(null);
+  const [activeDisputeJob, setActiveDisputeJob] = useState(null);
   const navigate = useNavigate();
+
+  const { socket } = useSocket();
 
   useEffect(() => {
     fetchJobs();
     fetchProfile();
   }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleJobUpdated = () => {
+      fetchJobs();
+    };
+
+    socket.on('job_updated', handleJobUpdated);
+
+    return () => {
+      socket.off('job_updated', handleJobUpdated);
+    };
+  }, [socket]);
+
 
   const fetchProfile = async () => {
     try {
@@ -211,30 +234,50 @@ export default function WorkerDashboard() {
                       </p>
                     </div>
 
-                    {job.status === 'pending' && (
-                      <div style={styles.cardActions}>
-                        <button
-                          className="btn-primary"
-                          style={styles.acceptBtn}
-                          onClick={() => updateStatus(job._id, 'accepted')}
-                          disabled={actionId === job._id}
-                        >
-                          {actionId === job._id ? <span style={styles.btnSpinner}></span> : 'Accept Job'}
-                        </button>
+                    <div style={styles.cardActions}>
+                      <button
+                        className="btn-secondary"
+                        style={styles.chatBtn}
+                        onClick={() => setActiveChatJob(job)}
+                      >
+                        <IconMessage size={15} color="#fff" />
+                        <span>Chat</span>
+                      </button>
 
-                        <button
-                          className="btn-secondary"
-                          style={styles.rejectBtn}
-                          onClick={() => updateStatus(job._id, 'rejected')}
-                          disabled={actionId === job._id}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    )}
+                      <button
+                        className="btn-secondary"
+                        style={styles.disputeBtn}
+                        onClick={() => setActiveDisputeJob(job)}
+                        title="Report an issue or dispute on this job"
+                      >
+                        <IconAlertTriangle size={14} color="#a1a1aa" />
+                        <span>Dispute</span>
+                      </button>
 
-                    {job.status === 'accepted' && (
-                      <div style={styles.cardActions}>
+
+                      {job.status === 'pending' && (
+                        <>
+                          <button
+                            className="btn-primary"
+                            style={styles.acceptBtn}
+                            onClick={() => updateStatus(job._id, 'accepted')}
+                            disabled={actionId === job._id}
+                          >
+                            {actionId === job._id ? <span style={styles.btnSpinner}></span> : 'Accept Job'}
+                          </button>
+
+                          <button
+                            className="btn-secondary"
+                            style={styles.rejectBtn}
+                            onClick={() => updateStatus(job._id, 'rejected')}
+                            disabled={actionId === job._id}
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
+
+                      {job.status === 'accepted' && (
                         <button
                           className="btn-primary"
                           style={styles.completeBtn}
@@ -243,14 +286,30 @@ export default function WorkerDashboard() {
                         >
                           {actionId === job._id ? <span style={styles.btnSpinner}></span> : 'Mark as Completed'}
                         </button>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
             )}
           </>
         )}
+
+        <ChatModal
+          isOpen={!!activeChatJob}
+          onClose={() => setActiveChatJob(null)}
+          job={activeChatJob}
+          recipientName={activeChatJob?.customer?.name}
+          recipientRole="Customer"
+        />
+
+        <DisputeModal
+          isOpen={!!activeDisputeJob}
+          onClose={() => setActiveDisputeJob(null)}
+          job={activeDisputeJob}
+        />
+
+
       </div>
     </div>
   );
@@ -414,6 +473,36 @@ const styles = {
     gap: '12px',
     borderTop: '1px solid rgba(255, 255, 255, 0.06)',
     paddingTop: '16px'
+  },
+  chatBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px',
+    padding: '0 16px',
+    height: '38px',
+    fontSize: '13px',
+    borderRadius: '8px',
+    background: 'rgba(255, 255, 255, 0.08)',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+    color: '#ffffff',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease'
+  },
+  disputeBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px',
+    padding: '0 14px',
+    height: '38px',
+    fontSize: '13px',
+    borderRadius: '8px',
+    background: 'rgba(255, 255, 255, 0.04)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    color: '#a1a1aa',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease'
   },
   acceptBtn: {
     flex: 1,

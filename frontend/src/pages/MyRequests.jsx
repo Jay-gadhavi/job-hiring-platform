@@ -2,17 +2,40 @@ import { useEffect, useState } from 'react';
 import API from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import NotificationBell from '../components/NotificationBell';
-import { IconClipboard, IconStar } from '../components/Icons';
+import { IconClipboard, IconStar, IconMessage, IconAlertTriangle } from '../components/Icons';
+import { useSocket } from '../context/SocketContext';
+import ChatModal from '../components/ChatModal';
+import DisputeModal from '../components/DisputeModal';
+
 
 export default function MyRequests() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { socket } = useSocket();
   
   const [activeReviewJobId, setActiveReviewJobId] = useState(null);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
+  const [activeChatJob, setActiveChatJob] = useState(null);
+  const [activeDisputeJob, setActiveDisputeJob] = useState(null);
+
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleJobUpdated = () => {
+      fetchRequests();
+    };
+
+    socket.on('job_updated', handleJobUpdated);
+
+    return () => {
+      socket.off('job_updated', handleJobUpdated);
+    };
+  }, [socket]);
+
 
   const handleReviewSubmit = async (e, jobId) => {
     e.preventDefault();
@@ -252,11 +275,49 @@ export default function MyRequests() {
                       )}
                     </div>
                   )}
+
+                  <div style={styles.cardFooter}>
+                    <button
+                      className="btn-secondary"
+                      style={styles.disputeBtn}
+                      onClick={() => setActiveDisputeJob(job)}
+                      title="Report an issue or dispute on this booking"
+                    >
+                      <IconAlertTriangle size={14} color="#a1a1aa" />
+                      <span>Dispute</span>
+                    </button>
+
+                    <button
+                      className="btn-secondary"
+                      style={styles.chatBtn}
+                      onClick={() => setActiveChatJob(job)}
+                    >
+                      <IconMessage size={15} color="#ffffff" />
+                      <span>Chat with Worker</span>
+                    </button>
+                  </div>
+
                 </div>
               </div>
             ))}
           </div>
         )}
+
+        <ChatModal
+          isOpen={!!activeChatJob}
+          onClose={() => setActiveChatJob(null)}
+          job={activeChatJob}
+          recipientName={activeChatJob?.worker?.user?.name}
+          recipientRole="Worker"
+        />
+
+        <DisputeModal
+          isOpen={!!activeDisputeJob}
+          onClose={() => setActiveDisputeJob(null)}
+          job={activeDisputeJob}
+        />
+
+
       </div>
     </div>
   );
@@ -502,6 +563,44 @@ const styles = {
     justifyContent: 'center',
     gap: '8px'
   },
+  cardFooter: {
+    marginTop: '16px',
+    paddingTop: '16px',
+    borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    gap: '10px'
+  },
+  disputeBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px',
+    padding: '0 14px',
+    height: '36px',
+    fontSize: '13px',
+    borderRadius: '8px',
+    background: 'rgba(255, 255, 255, 0.04)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    color: '#a1a1aa',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease'
+  },
+  chatBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px',
+    padding: '0 16px',
+    height: '36px',
+    fontSize: '13px',
+    borderRadius: '8px',
+    background: 'rgba(255, 255, 255, 0.08)',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+    color: '#ffffff',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease'
+  },
   btnSpinner: {
     display: 'inline-block',
     width: '14px',
@@ -512,3 +611,4 @@ const styles = {
     animation: 'spin 0.8s linear infinite'
   }
 };
+
