@@ -10,8 +10,11 @@ router.post('/register', async (req, res) => {
     const exists = await User.findOne({ email });
     if (exists) return res.status(400).json({ message: 'User already exists' });
 
+    // Enforce role security: public registration can only assign 'worker' or 'customer'
+    const assignedRole = role === 'worker' ? 'worker' : 'customer';
+
     const hashed = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashed, role });
+    const user = await User.create({ name, email, password: hashed, role: assignedRole });
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.status(201).json({ token, user: { id: user._id, name: user.name, role: user.role } });
@@ -39,6 +42,13 @@ router.post('/login', async (req, res) => {
 const protect = require('../middleware/auth');
 
 router.post('/make-me-admin', protect, async (req, res) => {
+  const { adminSecret } = req.body;
+  const configuredSecret = process.env.ADMIN_SECRET_KEY || 'skillhire_admin_secret_key_2026';
+  
+  if (adminSecret !== configuredSecret) {
+    return res.status(403).json({ message: 'Invalid admin secret key' });
+  }
+
   try {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });

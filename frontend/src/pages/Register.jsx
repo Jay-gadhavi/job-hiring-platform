@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import API from '../api/axios';
 import { useNavigate, Link } from 'react-router-dom';
-import { IconAlertTriangle, IconSearch, IconTool, IconShield } from '../components/Icons';
+import { IconAlertTriangle, IconSearch, IconTool } from '../components/Icons';
 
 
 export default function Register() {
@@ -110,17 +110,6 @@ export default function Register() {
                 </div>
                 <span className="role-title">Find Work</span>
                 <p style={styles.roleDesc}>Provide service</p>
-              </div>
-
-              <div 
-                className={`role-card ${form.role === 'admin' ? 'active' : ''}`}
-                onClick={() => setForm({ ...form, role: 'admin' })}
-              >
-                <div className="role-icon">
-                  <IconShield size={22} color={form.role === 'admin' ? '#ffffff' : '#a1a1aa'} />
-                </div>
-                <span className="role-title">Platform Admin</span>
-                <p style={styles.roleDesc}>Moderation</p>
               </div>
             </div>
           </div>
